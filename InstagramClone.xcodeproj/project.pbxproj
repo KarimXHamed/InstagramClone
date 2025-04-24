@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		80C768302DB939E700BAB898 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 80C7682F2DB939E700BAB898 /* Factory */; };
+		80F4117A2DBA6FC3004F6D1E /* IGListDiffKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80F411792DBA6FC3004F6D1E /* IGListDiffKit */; };
+		80F4117C2DBA6FC3004F6D1E /* IGListKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80F4117B2DBA6FC3004F6D1E /* IGListKit */; };
+		80F4117E2DBA6FC3004F6D1E /* IGListSwiftKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80F4117D2DBA6FC3004F6D1E /* IGListSwiftKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		8040B3322DB812380035882C /* InstagramClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -14,7 +21,7 @@
 		8040B3442DB8125A0035882C /* Exceptions for "InstagramClone" folder in "InstagramClone" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 8040B3312DB812380035882C /* InstagramClone */;
 		};
@@ -36,6 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				80F4117A2DBA6FC3004F6D1E /* IGListDiffKit in Frameworks */,
+				80F4117C2DBA6FC3004F6D1E /* IGListKit in Frameworks */,
+				80C768302DB939E700BAB898 /* Factory in Frameworks */,
+				80F4117E2DBA6FC3004F6D1E /* IGListSwiftKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +89,10 @@
 			);
 			name = InstagramClone;
 			packageProductDependencies = (
+				80C7682F2DB939E700BAB898 /* Factory */,
+				80F411792DBA6FC3004F6D1E /* IGListDiffKit */,
+				80F4117B2DBA6FC3004F6D1E /* IGListKit */,
+				80F4117D2DBA6FC3004F6D1E /* IGListSwiftKit */,
 			);
 			productName = InstagramClone;
 			productReference = 8040B3322DB812380035882C /* InstagramClone.app */;
@@ -107,6 +122,10 @@
 			);
 			mainGroup = 8040B3292DB812380035882C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				80C7682E2DB939E700BAB898 /* XCRemoteSwiftPackageReference "Factory" */,
+				80F411782DBA6FC3004F6D1E /* XCRemoteSwiftPackageReference "IGListKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8040B3332DB812380035882C /* Products */;
 			projectDirPath = "";
@@ -147,10 +166,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y44M997BUN;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = InstagramClone/Info.plist;
+				INFOPLIST_FILE = InstagramClone/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -175,10 +193,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y44M997BUN;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = InstagramClone/Info.plist;
+				INFOPLIST_FILE = InstagramClone/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -335,6 +352,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		80C7682E2DB939E700BAB898 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.3;
+			};
+		};
+		80F411782DBA6FC3004F6D1E /* XCRemoteSwiftPackageReference "IGListKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Instagram/IGListKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		80C7682F2DB939E700BAB898 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80C7682E2DB939E700BAB898 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		80F411792DBA6FC3004F6D1E /* IGListDiffKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80F411782DBA6FC3004F6D1E /* XCRemoteSwiftPackageReference "IGListKit" */;
+			productName = IGListDiffKit;
+		};
+		80F4117B2DBA6FC3004F6D1E /* IGListKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80F411782DBA6FC3004F6D1E /* XCRemoteSwiftPackageReference "IGListKit" */;
+			productName = IGListKit;
+		};
+		80F4117D2DBA6FC3004F6D1E /* IGListSwiftKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80F411782DBA6FC3004F6D1E /* XCRemoteSwiftPackageReference "IGListKit" */;
+			productName = IGListSwiftKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8040B32A2DB812380035882C /* Project object */;
 }
