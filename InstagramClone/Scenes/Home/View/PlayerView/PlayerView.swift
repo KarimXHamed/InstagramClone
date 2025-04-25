@@ -91,7 +91,6 @@ class PlayerView: UIView {
             switch status {
             case .readyToPlay:
                 print(".readyToPlay")
-                player?.play()
             case .failed:
                 print(".failed")
             case .unknown:
@@ -102,17 +101,18 @@ class PlayerView: UIView {
         }
     }
 
-    func play(with url: URL) {
+    func prepareToPlay(with url: URL) {
         setUpAsset(with: url) {[weak self] result in
             switch result {
             case .success(let asset):
                 self?.setUpPlayerItem(with: asset)
-
-                
+ 
             case .failure(let error):
                 print("Failed to load asset: \(error)")
+
             }
         }
+
     }
     
     deinit {
