@@ -7,19 +7,45 @@
 
 import UIKit
 import Combine
-
+import IGListKit
 class HomeViewController: UIViewController {
-
+    //MARK: -Outlets
+@IBOutlet weak var reelsCollectionView: UICollectionView!
+    //MARK: -variables
+        private var viewModel:HomeViewModelProtocol
+    init(viewModel: HomeViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
     
-    @IBOutlet weak var reelsCollectionView: UICollectionView!
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: -Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+  
+        
         
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        viewModel.viewWillAppear()
+    }
+    //MARK: -SetupUI
     private func setupUI() {
         setupTitle()
         registerReelsCollectionViewCell()
+        //setupIGListKit()
+    }
+    
+    private func setupIGListKit() {
+        let updater = ListAdapterUpdater()
+        let adapter = ListAdapter(updater: updater, viewController: self,workingRangeSize: 1)
+//        adapter.collectionView = reelsCollectionView
+//        adapter.dataSource = self
     }
     
     private func registerReelsCollectionViewCell() {
@@ -42,6 +68,7 @@ class HomeViewController: UIViewController {
     
 
 }
+//MARK: -Collection view cell functions (will be removed)
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 20
@@ -80,6 +107,18 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         }
     }
-
+//    //MARK: -IGListKit functions
+//    func objects(for listAdapter: ListAdapter) -> [any ListDiffable] {
+//        return 10
+//        //replaces number of items and nuber of sections at
+//    }
+//    
+//    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
+//        
+//    }
+//    
+//    func emptyView(for listAdapter: ListAdapter) -> UIView? {
+//        
+//    }
 
 }
