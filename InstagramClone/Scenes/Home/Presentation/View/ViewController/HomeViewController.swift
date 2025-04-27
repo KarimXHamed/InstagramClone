@@ -107,18 +107,6 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             }
         }
     }
-//    //MARK: -IGListKit functions
-//    func objects(for listAdapter: ListAdapter) -> [any ListDiffable] {
-//        return 10
-//        //replaces number of items and nuber of sections at
-//    }
-//    
-//    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-//        
-//    }
-//    
-//    func emptyView(for listAdapter: ListAdapter) -> UIView? {
-//        
-//    }
+
 
 }
