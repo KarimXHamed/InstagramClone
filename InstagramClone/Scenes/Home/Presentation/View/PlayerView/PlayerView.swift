@@ -106,6 +106,7 @@ class PlayerView: UIView {
             switch result {
             case .success(let asset):
                 self?.setUpPlayerItem(with: asset)
+                print("prepared successfully")
  
             case .failure(let error):
                 print("Failed to load asset: \(error)")

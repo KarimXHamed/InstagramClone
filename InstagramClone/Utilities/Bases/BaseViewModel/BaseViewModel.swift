@@ -1,8 +1,8 @@
 //
 //  BaseViewModel.swift
-//  AlTasherat-IOS-G2-T1
+//  InstagramClone
 //
-//  Created by mayar on 13/03/2025.
+//  Created by Karim Hamed on 24/06/2025.
 //
 
 import Foundation
@@ -21,12 +21,10 @@ class BaseViewModel: BaseViewModelProtocol {
 
     var cancellables = Set<AnyCancellable>()
     
-     func onFailure(failure:AltasheratExceptions){
+     func onFailure(failure:InstagramCloneExceptions){
         switch failure {
         case .remote(let remoteError):
             error = remoteError.errorDescription
-        case .multipleErrors(let multipleErrors):
-            handleMultipleErrors(multipleErrors: multipleErrors)
         case .validationError(.fieldErrors(let validationErrors)):
             handleValidationErrors(error: validationErrors)
         default:
@@ -34,27 +32,13 @@ class BaseViewModel: BaseViewModelProtocol {
         }
    
     }
-    func handleMultipleErrors(multipleErrors:AltasheratExceptions.MultipleErrors){
-        switch multipleErrors {
-        case .multipleErrors(let errors):
-            for error in errors {
-                switch error {
-                case .inputValidation(let inputValidationError):
-                    handleInputValidationError(error: inputValidationError)
-                case .requestValidation(let requestValidationError):
-                    handleRequestValidation(error: requestValidationError)
-                default:
-                    break
-                }
-            }
-        }
-    }
-    func handleRequestValidation(error:AltasheratExceptions.RequestValidationError){
+
+    func handleRequestValidation(error:InstagramCloneExceptions.RequestValidationError){
         print(error.errorDescription as Any)
     }
-    func handleInputValidationError(error:AltasheratExceptions.InputValidationError){}
-    func handleValidationErrors(error:[FieldKey:[AltasheratExceptions]]){}
-    func joinErrors(errors:[AltasheratExceptions])->String{
+    func handleInputValidationError(error:InstagramCloneExceptions.InputValidationError){}
+    func handleValidationErrors(error:[FieldKey:[InstagramCloneExceptions]]){}
+    func joinErrors(errors:[InstagramCloneExceptions])->String{
         return errors.map {$0.localizedDescription}.joined(separator: "\n")
          
     }

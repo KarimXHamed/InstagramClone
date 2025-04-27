@@ -1,8 +1,8 @@
 //
 //  BaseViewController.swift
-//  AlTasherat-IOS-G2-T1
+//  InstagramClone
 //
-//  Created by mayar on 13/03/2025.
+//  Created by Karim Hamed on 24/06/2025.
 //
 
 import UIKit
@@ -69,12 +69,12 @@ class BaseViewController: UIViewController {
     }
 
     // MARK: - Error Alerts
-    func showErrorAlert(message: String, title: String = "error".localized) {
+    func showErrorAlert(message: String, title: String = "error") {
         AlertPresenter.showErrorAlert(on: self, message: message, title: title)
     }
     func showAlertTwoActions(
                                           message: String,
-                                          title: String = "error".localized,
+                                          title: String = "error",
                                           firstButtonTitle: String,
                                           firstAction: (() -> Void)? = nil,
                                           secondButtonTitle: String? = nil,
@@ -84,9 +84,9 @@ class BaseViewController: UIViewController {
     }
     
     func showSuccessAlert(successMessage: String) {
-        let alert = UIAlertController(title: "success".localized, message: successMessage, preferredStyle: .alert)
+        let alert = UIAlertController(title: "success", message: successMessage, preferredStyle: .alert)
         
-        let okAction = UIAlertAction(title: "OK".localized, style: .default) { _ in
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
             self.navigationController?.popViewController(animated: true)
         }
         

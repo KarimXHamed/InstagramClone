@@ -9,51 +9,72 @@ import UIKit
 
 class ReelsCollectionViewCell: UICollectionViewCell {
 
+    @IBOutlet weak var playerView: PlayerView!
     @IBOutlet weak var playerContainerView: UIView!
-    private let videoURL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-    private var playerView: PlayerView!
+    private var videoURL:String?
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        prepareVideo()
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        setUpPlayerView()
-        playVideo()
+        print("awake from nib start")
         playerContainerView.backgroundColor = .black
+        print("awake from nib end")
+
     }
+    
+
+    
     private func setUpPlayerView() {
-        print("setUpPlayerView started")
-        playerView = PlayerView()
         playerContainerView.addSubview(playerView)
         playerView.translatesAutoresizingMaskIntoConstraints = false
         playerView.leadingAnchor.constraint(equalTo: playerContainerView.leadingAnchor).isActive = true
         playerView.trailingAnchor.constraint(equalTo: playerContainerView.trailingAnchor).isActive = true
         playerView.heightAnchor.constraint(equalTo: playerContainerView.widthAnchor).isActive = true
         playerView.centerYAnchor.constraint(equalTo: playerContainerView.centerYAnchor).isActive = true
-        print("setUpPlayerView ended")
 
     }
     
     
-    func playVideo() {
-        print("playvideo started")
+    func prepareVideo() {
+        print("prepare video start")
 
-        guard let url = URL(string: videoURL) else { return }
+        guard let videoURL = videoURL else {
+            print("video url nil")
+            return}
+        guard let url = URL(string: videoURL) else {
+            print("url nil")
+
+            return }
         playerView.prepareToPlay(with: url)
-        print("playvideo ended")
+        play()
+        print("prepare video end")
+
 
     }
     func play() {
-        print("play started")
-
+print("play start")
         playerView.player?.play()
-        print("play ended")
+        print("play end")
+
 
     }
     
     func pause() {
-        print("pause started")
 
         playerView.player?.pause()
-        print("pause ended")
 
+    }
+    
+    func configure(model:ReelsCollectionViewCellModel){
+        videoURL = model.url
+          print("Configured with videoURL: \(videoURL ?? "nil")")
     }
 
 }

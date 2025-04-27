@@ -10,7 +10,7 @@ struct RequestBuilder {
     private var urlRequest: URLRequest?
 
     // MARK: - Configure base URL and path
-    private func setBaseURL(_ baseURL: URL?, path: String?) {
+    private mutating func setBaseURL(_ baseURL: URL?, path: String?) {
         guard let baseURL = baseURL, let path = path else { return }
         self.urlComponents = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
         if let finalURL = urlComponents?.url {
@@ -19,13 +19,12 @@ struct RequestBuilder {
     }
     
     // MARK: - Configure HTTP method
-    private func setMethod(_ method: HTTPMethod?) {
-        guard let method = method else { return }
-        self.urlRequest?.method = method
-    }
-
+    private mutating func setMethod(method: String?) {
+       guard let method=method else {return}
+       urlRequest?.httpMethod=method
+   }
     // MARK: - Add Query Parameters
-    private func addQueryItems(_ queryItems: [FieldKey: String]?) {
+    private mutating func addQueryItems(_ queryItems: [FieldKey: String]?) {
         guard let queryItems = queryItems else { return }
         let queryArray = queryItems.map { URLQueryItem(name: $0.rawValue, value: $1) }
         
@@ -37,7 +36,7 @@ struct RequestBuilder {
     }
 
     // MARK: - Add Headers
-    private func addHeaders(_ headers: [FieldKey: String]?) {
+    private mutating func addHeaders(_ headers: [FieldKey: String]?) {
         guard let headers = headers else { return }
         let headerDict = Dictionary(uniqueKeysWithValues: headers.map { ($0.rawValue, $1) })
         
@@ -45,34 +44,36 @@ struct RequestBuilder {
     }
 
     // MARK: - Set Request Body
-    private func setBody(_ parameters: [FieldKey: Any]?, method: HTTPMethod?) {
-        guard let method = method, method != .get else { return }
-        guard let parameters = parameters else { return }
+    private mutating func setBody(parameters: Any?,method:String?) {
+        guard let parameters = parameters as? [FieldKey: Any] else { return }
         
-        let bodyDict = Dictionary(uniqueKeysWithValues: parameters.map { ($0.rawValue, $0.value) })
-        self.urlRequest?.httpBody = try? JSONSerialization.data(withJSONObject: bodyDict, options: .fragmentsAllowed)
+        guard let method = method, method != HTTPMethods.get.rawValue else { return }
+
+        let convertedParameters = Dictionary(uniqueKeysWithValues: parameters.map { ($0.rawValue, $1) })
+
+        self.urlRequest?.httpBody = try? JSONSerialization.data(withJSONObject: convertedParameters, options: .fragmentsAllowed)
     }
 
     // MARK: - Set Timeout
-    private func setTimeout(_ timeout: TimeInterval?) {
+    private mutating func setTimeout(_ timeout: TimeInterval?) {
         guard let timeout = timeout else { return }
         self.urlRequest?.timeoutInterval = timeout
     }
 
     // MARK: - Set Authorization Header
-    private func setCredentials(_ credentials: String?) {
+    private mutating func setCredentials(_ credentials: String?) {
         guard let credentials = credentials else { return }
         self.urlRequest?.setValue("Basic \(credentials)", forHTTPHeaderField: "Authorization")
     }
     
     // MARK: - Build Final URLRequest
-    func makeRequest(endpoint: Endpoint, method: HTTPMethod) throws -> URLRequest {
+    mutating func  makeRequest(endpoint: Endpoint, method: String) throws -> URLRequest {
         setBaseURL(endpoint.baseURL, path: endpoint.path)
-        setMethod(method)
+        setMethod(method:method)
         setTimeout(endpoint.timeout)
         setCredentials(endpoint.credentials)
         addHeaders(endpoint.headers)
-        setBody(endpoint.buildBody(), method: method)
+        setBody(parameters: endpoint.buildBody(), method: method)
         addQueryItems(endpoint.queryItems)
         
         guard let finalURL = urlComponents?.url else {

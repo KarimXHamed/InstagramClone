@@ -6,11 +6,11 @@
 //
 import Factory
 import Alamofire
+import Foundation
 
 class NetworkProvider: NetworkProviderProtocol {
  
     
-    @Injected(\.responseHandler) private var responseHandler:ResponseHandler
     
     func get<T:Codable>(endpoint: any Endpoint, model: T.Type) async throws -> T  {
         return try await request(endpoint: endpoint, method: HTTPMethods.get)
@@ -31,11 +31,12 @@ class NetworkProvider: NetworkProviderProtocol {
         
     }
     
-    func request<T:Codable>(endpoint: Endpoint,method:HTTPMethods) async throws -> T {
-        let urlRequest = RequestBuilder.makeRequest(endpoint: endpoint, method:method)
+    func request<T: Codable>(endpoint: Endpoint, method: HTTPMethods) async throws -> T {
+        var requestBuilder = RequestBuilder()
+        let urlRequest = try requestBuilder.makeRequest(endpoint: endpoint, method: method.rawValue)
         
-        let response = AF.request(urlRequest)
-            .validate()
+        let response = await AF.request(urlRequest)
+            .validate(statusCode: 200..<300)
             .cURLDescription { description in
                 print(description)
             }
@@ -45,16 +46,14 @@ class NetworkProvider: NetworkProviderProtocol {
         debugPrint(response)
         
         switch response.result {
-        case .success(let data):
-            guard let httpResponse = response.response else {
-                throw InstagramCloneExceptions.remote(.unknownError(statusCode: nil, message: "Invalid HTTP response"))
-            }
-            return try responseHandler.handleError(httpResponse: httpResponse, data: data, model: T.self)
+        case .success(let model):
+            return model
             
         case .failure(let error):
-            throw InstagramCloneExceptions.remote(.unknownError(statusCode: nil, message: error))
+            throw InstagramCloneExceptions.remote(.unknownError(statusCode: nil, message: error.errorDescription))
         }
     }
-}
+    }
+
 
 

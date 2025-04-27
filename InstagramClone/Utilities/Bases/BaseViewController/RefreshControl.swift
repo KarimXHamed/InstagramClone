@@ -1,8 +1,8 @@
 //
 //  RefreshControl.swift
-//  AlTasherat-IOS-G2-T1
+//  InstagramClone
 //
-//  Created by mayar on 13/03/2025.
+//  Created by Karim Hamed on 24/06/2025.
 //
 
 import UIKit

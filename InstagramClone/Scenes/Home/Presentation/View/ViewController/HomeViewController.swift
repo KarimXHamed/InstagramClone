@@ -8,11 +8,12 @@
 import UIKit
 import Combine
 import IGListKit
-class HomeViewController: UIViewController {
+class HomeViewController: BaseViewController {
     //MARK: -Outlets
 @IBOutlet weak var reelsCollectionView: UICollectionView!
     //MARK: -variables
-        private var viewModel:HomeViewModelProtocol
+    private var viewModel:HomeViewModelProtocol
+     var listAdapter: ListAdapter!
     init(viewModel: HomeViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -26,34 +27,51 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-  
+        bindViewModel()
         
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.viewWillAppear()
     }
     //MARK: -SetupUI
     private func setupUI() {
+        viewModel.viewWillAppear()
         setupTitle()
         registerReelsCollectionViewCell()
-        //setupIGListKit()
+        setupIGListKit()
     }
     
     private func setupIGListKit() {
         let updater = ListAdapterUpdater()
-        let adapter = ListAdapter(updater: updater, viewController: self,workingRangeSize: 1)
-//        adapter.collectionView = reelsCollectionView
-//        adapter.dataSource = self
+        listAdapter = ListAdapter(updater: updater, viewController: self,workingRangeSize: 1)
+                    listAdapter.collectionView = self.reelsCollectionView
+                    listAdapter.dataSource = self
+                    listAdapter.delegate = self
+                    print("Adapter and data source set")
     }
     
     private func registerReelsCollectionViewCell() {
-        reelsCollectionView.delegate = self
-        reelsCollectionView.dataSource = self
         reelsCollectionView.register(UINib(nibName: "ReelsCollectionViewCell", bundle: nil),
                                      forCellWithReuseIdentifier: "ReelsCollectionViewCell")
         reelsCollectionView.isPagingEnabled = true
+    }
+    
+    //MARK: -Bind View Model
+    func bindViewModel(){
+        viewModel.shouldReloadPublisher
+            .receive(on: DispatchQueue.main)
+            .sink{ [weak self] _ in
+                self?.onSuccessReels()
+                
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func onSuccessReels() {
+        print("will update data")
+        listAdapter.performUpdates(animated: true)
+
     }
     
     private func setupTitle() {
@@ -68,45 +86,39 @@ class HomeViewController: UIViewController {
     
 
 }
-//MARK: -Collection view cell functions (will be removed)
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+extension HomeViewController: ListAdapterDataSource , ListAdapterDelegate {
+    func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
+        print("will display:\(object)")
+        if let videoCell = object as? ReelsCollectionViewCell {
+            print("success cast")
+            videoCell.prepareVideo()
+            videoCell.play()
+             }
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReelsCollectionViewCell", for: indexPath) as? ReelsCollectionViewCell else{
-            fatalError("unable to dequeue reusable cell")
-        }
-        return cell
+    func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying object: Any, at index: Int) {
+        print("end display:\(object)")
+
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-    }
+    // MARK: - ListAdapterDelegate Methods
+
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        DispatchQueue.main.async {
-            for cell in self.reelsCollectionView.visibleCells {
-                guard let indexPath = self.reelsCollectionView.indexPath(for: cell),
-                      let reelCell = cell as? ReelsCollectionViewCell,
-                      let attributes = self.reelsCollectionView.layoutAttributesForItem(at: indexPath) else { continue }
-
-                let cellFrameInCollectionView = self.reelsCollectionView.convert(attributes.frame, to: self.reelsCollectionView)
-                let intersection = self.reelsCollectionView.bounds.intersection(cellFrameInCollectionView)
-                let visibleHeight = intersection.height
-                let visibilityFraction = visibleHeight / attributes.frame.height
-
-                print("Index: \(indexPath.item), Visibility: \(visibilityFraction)")
-
-                if visibilityFraction > 0.5 {
-                    reelCell.play()
-                } else {
-                    reelCell.pause()
-                }
+    // MARK: - IGListKit DataSource Methods
+    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
+        print("Objects for listAdapter: \(viewModel.models())")  // Debugging the data being provided to IGListKit
+        
+        return viewModel.models()
+    }
+    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
+                print("Section controller requested for object: \(object)")  // Debugging the request for section controllers
+                return ReelsSectionController()
             }
-        }
+        
+    func emptyView(for listAdapter: ListAdapter) -> UIView? {
+                return nil
+            }
+        
     }
 
 
-}

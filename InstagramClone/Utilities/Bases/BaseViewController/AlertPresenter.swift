@@ -1,24 +1,24 @@
 //
 //  AlertPresenter.swift
-//  AlTasherat-IOS-G2-T1
+//  InstagramClone
 //
-//  Created by mayar on 13/03/2025.
+//  Created by Karim Hamed on 24/06/2025.
 //
 
 import UIKit
 
 final class AlertPresenter {
 
-    static func showErrorAlert(on viewController: UIViewController, message: String, title: String = "error".localized) {
+    static func showErrorAlert(on viewController: UIViewController, message: String, title: String = "error") {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK".localized, style: .default))
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
         viewController.present(alertController, animated: true)
     }
     
     static func showAlertTwoActions (
         on viewController: UIViewController,
         message: String,
-        title: String = "error".localized,
+        title: String = "error",
         firstButtonTitle: String,
         firstAction: (() -> Void)? = nil,
         secondButtonTitle: String? = nil,

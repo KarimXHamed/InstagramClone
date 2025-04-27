@@ -1,24 +1,15 @@
 //
 //  BaseUseCase.swift
-//  AlTasherat-IOS-G2-T1
+//  InstagramClone
 //
-//  Created by mayar on 24/03/2025.
+//  Created by Karim Hamed on 24/06/2025.
 //
 
 import Foundation
 
 class BaseUseCase: BaseUseCaseProtocol {
 
-    func mapErrors(errors: [FieldKey: [AltasheratExceptions]]) -> [AltasheratExceptions] {
-        var mappedErrors: [AltasheratExceptions] = []
-        for error in errors {
-            if !error.value.isEmpty {
-                mappedErrors.append(contentsOf: error.value)
-            }
-        }
-        return mappedErrors
-    }
-    func filterErrors(errors:[FieldKey:[AltasheratExceptions]])->[FieldKey:[AltasheratExceptions]]{
+    func filterErrors(errors:[FieldKey:[InstagramCloneExceptions]])->[FieldKey:[InstagramCloneExceptions]]{
         return errors.filter { !$0.value.isEmpty }
     }
 }
