@@ -4,7 +4,6 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,10 +18,9 @@
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="fjZ-1c-HGw">
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" pagingEnabled="YES" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="fjZ-1c-HGw">
                     <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="XGl-f1-615">
+                    <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="XGl-f1-615">
                         <size key="itemSize" width="128" height="128"/>
                         <size key="headerReferenceSize" width="0.0" height="0.0"/>
                         <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -31,22 +29,13 @@
                 </collectionView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
-            <color key="backgroundColor" systemColor="systemOrangeColor"/>
             <constraints>
-                <constraint firstAttribute="bottom" secondItem="fjZ-1c-HGw" secondAttribute="bottom" id="DUp-mr-Ha6"/>
-                <constraint firstItem="fjZ-1c-HGw" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Hal-F2-RKd"/>
-                <constraint firstItem="fjZ-1c-HGw" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="N3P-iV-Cf9"/>
-                <constraint firstItem="fjZ-1c-HGw" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="WuV-Cn-Oez"/>
+                <constraint firstItem="fjZ-1c-HGw" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="RjQ-M4-Rmd"/>
+                <constraint firstAttribute="bottom" secondItem="fjZ-1c-HGw" secondAttribute="bottom" id="dsN-VU-q4M"/>
+                <constraint firstItem="fjZ-1c-HGw" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="idK-mQ-bR1"/>
+                <constraint firstItem="fjZ-1c-HGw" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="sZI-ds-j2K"/>
             </constraints>
             <point key="canvasLocation" x="130.53435114503816" y="-11.267605633802818"/>
         </view>
     </objects>
-    <resources>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-    </resources>
 </document>

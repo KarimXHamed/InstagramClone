@@ -10,10 +10,10 @@ import Combine
 import IGListKit
 class HomeViewController: BaseViewController {
     //MARK: -Outlets
-@IBOutlet weak var reelsCollectionView: UICollectionView!
+    @IBOutlet weak var reelsCollectionView: UICollectionView!
     //MARK: -variables
     private var viewModel:HomeViewModelProtocol
-     var listAdapter: ListAdapter!
+    var listAdapter: ListAdapter!
     init(viewModel: HomeViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -31,30 +31,61 @@ class HomeViewController: BaseViewController {
         
         
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
+        
     }
+    
+    
     //MARK: -SetupUI
     private func setupUI() {
         viewModel.viewWillAppear()
         setupTitle()
         registerReelsCollectionViewCell()
         setupIGListKit()
+        setupNavigationBar()
+        
     }
     
     private func setupIGListKit() {
         let updater = ListAdapterUpdater()
-        listAdapter = ListAdapter(updater: updater, viewController: self,workingRangeSize: 1)
-                    listAdapter.collectionView = self.reelsCollectionView
-                    listAdapter.dataSource = self
-                    listAdapter.delegate = self
-                    print("Adapter and data source set")
+        listAdapter = ListAdapter(updater: updater, viewController: self)
+        listAdapter.collectionView = self.reelsCollectionView
+        listAdapter.dataSource = self
+        listAdapter.scrollViewDelegate = self
+    }
+    
+    private func setupNavigationBar() {
+        //        self.navigationController?.setNavigationBarHidden(true, animated: true)
+        self.navigationController?.navigationBar.barTintColor = UIColor.clear
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+//        DispatchQueue.main.async{
+//            self.reelsCollectionView.contentOffset.y=0
+//            self.reelsCollectionView.contentOffset = .zero
+//        }
+        
+        
+        
     }
     
     private func registerReelsCollectionViewCell() {
         reelsCollectionView.register(UINib(nibName: "ReelsCollectionViewCell", bundle: nil),
                                      forCellWithReuseIdentifier: "ReelsCollectionViewCell")
         reelsCollectionView.isPagingEnabled = true
+        
+    }
+    private func playFirstVideo() {
+        
+        DispatchQueue.main.async{
+            let firstIndexPath = IndexPath(item: 0, section: 0)
+            
+            guard let firstCell = self.reelsCollectionView.cellForItem(at: firstIndexPath) as? ReelsCollectionViewCell else{
+                return
+            }
+            firstCell.prepareVideo()
+        }
+        
+        
     }
     
     //MARK: -Bind View Model
@@ -71,38 +102,51 @@ class HomeViewController: BaseViewController {
     private func onSuccessReels() {
         print("will update data")
         listAdapter.performUpdates(animated: true)
-
+        playFirstVideo()
+        
+        
+        
     }
     
     private func setupTitle() {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.text = "Reels"
         let leftBarButtonItem = UIBarButtonItem(customView: label)
         navigationItem.leftBarButtonItem = leftBarButtonItem
     }
     
     
-
+    
 }
-extension HomeViewController: ListAdapterDataSource , ListAdapterDelegate {
-    func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
-        print("will display:\(object)")
-        if let videoCell = object as? ReelsCollectionViewCell {
-            print("success cast")
-            videoCell.prepareVideo()
-            videoCell.play()
-             }
+extension HomeViewController: ListAdapterDataSource , UICollectionViewDelegate  {
+    // MARK: - Scroll view delegate Methods
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        DispatchQueue.main.async {
+            for cell in self.reelsCollectionView.visibleCells {
+                guard let indexPath = self.reelsCollectionView.indexPath(for: cell),
+                      let reelCell = cell as? ReelsCollectionViewCell,
+                      let attributes = self.reelsCollectionView.layoutAttributesForItem(at: indexPath) else { continue }
+                
+                let cellFrameInCollectionView = self.reelsCollectionView.convert(attributes.frame, to: self.reelsCollectionView)
+                let intersection = self.reelsCollectionView.bounds.intersection(cellFrameInCollectionView)
+                let visibleHeight = intersection.height
+                let visibilityFraction = visibleHeight / attributes.frame.height
+                
+                print("Index: \(indexPath.item), Visibility: \(visibilityFraction)")
+                
+                if visibilityFraction > 0.5 {
+                    reelCell.prepareVideo()
+                } else {
+                    reelCell.cancelPreparation()
+                }
+            }
+        }
     }
     
-    func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying object: Any, at index: Int) {
-        print("end display:\(object)")
-
-    }
     
-    // MARK: - ListAdapterDelegate Methods
-
+    
     
     // MARK: - IGListKit DataSource Methods
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
@@ -111,14 +155,14 @@ extension HomeViewController: ListAdapterDataSource , ListAdapterDelegate {
         return viewModel.models()
     }
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-                print("Section controller requested for object: \(object)")  // Debugging the request for section controllers
-                return ReelsSectionController()
-            }
-        
-    func emptyView(for listAdapter: ListAdapter) -> UIView? {
-                return nil
-            }
-        
+        print("Section controller requested for object: \(object)")  // Debugging the request for section controllers
+        return ReelsSectionController()
     }
+    
+    func emptyView(for listAdapter: ListAdapter) -> UIView? {
+        return nil
+    }
+    
+}
 
 
