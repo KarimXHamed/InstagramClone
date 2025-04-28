@@ -15,17 +15,7 @@ class ReelsDataSource:NSObject {
     
 }
 
-extension ReelsDataSource: ListAdapterDataSource , ListAdapterDelegate {
-    func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
-        return
-    }
-    
-    func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying object: Any, at index: Int) {
-        return
-    }
-    
-    
-    //MARK: -IGListKit functions
+extension ReelsDataSource: ListAdapterDataSource {
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
         print("Objects for listAdapter: \(source?.models() ?? [])")  // Debugging the data being provided to IGListKit
 
