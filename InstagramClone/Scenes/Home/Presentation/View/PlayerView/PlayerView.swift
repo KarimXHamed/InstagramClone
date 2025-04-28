@@ -9,6 +9,9 @@ import UIKit
 import AVFoundation
 
 class PlayerView: UIView {
+    private var isPreparing = false
+    private var isCancelled = false
+    private var alreadyPlayed = false
     var player: AVPlayer? {
         get {
             return playerLayer.player
@@ -17,13 +20,13 @@ class PlayerView: UIView {
             playerLayer.player = newValue
         }
     }
-        
+    
     var playerLayer: AVPlayerLayer {
         return layer as! AVPlayerLayer
     }
     
     private var playerItemContext = 0
-
+    
     private var playerItem: AVPlayerItem?
     
     override class var layerClass: AnyClass {
@@ -43,13 +46,13 @@ class PlayerView: UIView {
                     guard isPlayable else {
                         throw NSError(domain: "AVAssetError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Asset is not playable"])
                     }
-
+                    
                     completion(.success(asset))
                 } catch {
                     completion(.failure(error))
                 }
             }
-
+            
         } else {
             let asset = AVURLAsset(url: url)
             asset.loadValuesAsynchronously(forKeys: ["playable"]) {
@@ -67,20 +70,31 @@ class PlayerView: UIView {
         }
     }
     private func setUpPlayerItem(with asset: AVAsset) {
-        playerItem = AVPlayerItem(asset: asset)
-        playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: &playerItemContext)
-            
+        // Clean old player if exists
+        if let oldPlayerItem = playerItem {
+            oldPlayerItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status))
+        }
+        player?.pause()
+        player = nil
+        playerItem = nil
+        
+        // Now create the new player
+        let newItem = AVPlayerItem(asset: asset)
+        playerItem = newItem
+        newItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: &playerItemContext)
+        
         DispatchQueue.main.async { [weak self] in
-            self?.player = AVPlayer(playerItem: self?.playerItem!)
+            self?.player = AVPlayer(playerItem: newItem)
         }
     }
-        
+    
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard context == &playerItemContext else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             return
         }
-            
+        
         if keyPath == #keyPath(AVPlayerItem.status) {
             let status: AVPlayerItem.Status
             if let statusNumber = change?[.newKey] as? NSNumber {
@@ -91,6 +105,10 @@ class PlayerView: UIView {
             switch status {
             case .readyToPlay:
                 print(".readyToPlay")
+                if !isCancelled {
+                    player?.play()
+                    alreadyPlayed = true
+                }
             case .failed:
                 print(".failed")
             case .unknown:
@@ -100,26 +118,54 @@ class PlayerView: UIView {
             }
         }
     }
-
+    
     func prepareToPlay(with url: URL) {
+        guard !isPreparing else {
+            print("Already preparing... ")
+            return
+        }
+        if alreadyPlayed {
+
+                  player?.pause()
+            return
+              }
+        
+        print("prepare video start ")
+        isCancelled = false
+        isPreparing = true
         setUpAsset(with: url) {[weak self] result in
             switch result {
             case .success(let asset):
                 self?.setUpPlayerItem(with: asset)
                 print("prepared successfully")
- 
+                
             case .failure(let error):
                 print("Failed to load asset: \(error)")
-
+                
             }
         }
-
+        
+    }
+    func cancelPreparation() {
+        isCancelled = true
+        isPreparing = false
+        player?.pause()
+        player = nil
+        print("Cancelled preparation ")
+    }
+    func resetPlayerView() {
+        player?.pause()
+        
+        player?.replaceCurrentItem(with: nil)
+        alreadyPlayed = false
     }
     
     deinit {
-         playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status))
-         print("deinit of PlayerView")
-     }
-
+        playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status))
+        print("deinit of PlayerView")
+    }
+    
+    
+    
     
 }
