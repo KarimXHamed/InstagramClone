@@ -17,16 +17,14 @@ class ReelsDataSource:NSObject {
 
 extension ReelsDataSource: ListAdapterDataSource {
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-        print("Objects for listAdapter: \(source?.models() ?? [])")  // Debugging the data being provided to IGListKit
-
-        return source?.models() ?? [] }
-        func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-            print("Section controller requested for object: \(object)")  // Debugging the request for section controllers
-            return ReelsSectionController()
-        }
+        return source?.models() ?? []
+    }
+    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
+        return ReelsSectionController()
+    }
     
-        func emptyView(for listAdapter: ListAdapter) -> UIView? {
-            return nil
-        }
+    func emptyView(for listAdapter: ListAdapter) -> UIView? {
+        return nil
+    }
     
 }
