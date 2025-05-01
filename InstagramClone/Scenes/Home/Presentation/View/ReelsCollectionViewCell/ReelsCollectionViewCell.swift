@@ -66,6 +66,17 @@
             
             
         }
+        
+        func cancelPreparation() {
+            guard let videoURL = videoURL else {
+                print("video url nil")
+                return}
+            guard let url = URL(string: videoURL) else {
+                print("url nil")
+                return }
+            playerView.cancelPreparation(with:url)
+        }
+        
         func play() {
             print("play start")
             playerView.player?.play()
@@ -87,13 +98,11 @@
             videoURL = model.url
             print("Configured with videoURL: \(videoURL ?? "nil")")
         }
-        func cancelPreparation() {
-            playerView.cancelPreparation()
-        }
+
     override func prepareForReuse() {
         super.prepareForReuse()
-        playerView.resetPlayerView()
-        videoURL = nil
+        //playerView.resetPlayerView()
+        //videoURL = nil
         
         cancelPreparation()
         
