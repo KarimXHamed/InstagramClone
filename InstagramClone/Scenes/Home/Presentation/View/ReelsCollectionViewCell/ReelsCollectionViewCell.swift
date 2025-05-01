@@ -61,7 +61,6 @@
                 
                 return }
             playerView.prepareToPlay(with: url)
-            play()
             print("prepare video end")
             
             
@@ -104,7 +103,7 @@
         //playerView.resetPlayerView()
         //videoURL = nil
         
-        cancelPreparation()
+        //cancelPreparation()
         
     }
     
