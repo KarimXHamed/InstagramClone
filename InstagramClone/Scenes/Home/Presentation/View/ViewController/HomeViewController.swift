@@ -31,41 +31,40 @@ class HomeViewController: BaseViewController {
         
         
     }
-    override func viewDidAppear(_ animated: Bool) {
-        
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        viewModel.viewWillAppear()
+        setupScrollViewDelegate()
+
     }
     
     
     //MARK: -SetupUI
     private func setupUI() {
-        viewModel.viewWillAppear()
+        setupCollectionView()
         setupTitle()
         registerReelsCollectionViewCell()
-        setupIGListKit()
         setupNavigationBar()
         
     }
     
-    private func setupIGListKit() {
-        let updater = ListAdapterUpdater()
-        listAdapter = ListAdapter(updater: updater, viewController: self)
-        listAdapter.collectionView = self.reelsCollectionView
-        listAdapter.dataSource = self
+    private func setupCollectionView(){
+                DispatchQueue.main.async{
+                    self.reelsCollectionView.contentOffset.y=0
+                    self.reelsCollectionView.contentOffset = .zero
+                }
+    }
+    
+    private func setupScrollViewDelegate() {
+
         listAdapter.scrollViewDelegate = self
     }
     
     private func setupNavigationBar() {
-        //        self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.navigationController?.navigationBar.barTintColor = UIColor.clear
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-//        DispatchQueue.main.async{
-//            self.reelsCollectionView.contentOffset.y=0
-//            self.reelsCollectionView.contentOffset = .zero
-//        }
-        
-        
-        
+
     }
     
     private func registerReelsCollectionViewCell() {
@@ -120,7 +119,7 @@ class HomeViewController: BaseViewController {
     
     
 }
-extension HomeViewController: ListAdapterDataSource , UICollectionViewDelegate  {
+extension HomeViewController: UICollectionViewDelegate  {
     // MARK: - Scroll view delegate Methods
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         DispatchQueue.main.async {
@@ -145,23 +144,6 @@ extension HomeViewController: ListAdapterDataSource , UICollectionViewDelegate  
         }
     }
     
-    
-    
-    
-    // MARK: - IGListKit DataSource Methods
-    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-        print("Objects for listAdapter: \(viewModel.models())")  // Debugging the data being provided to IGListKit
-        
-        return viewModel.models()
-    }
-    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-        print("Section controller requested for object: \(object)")  // Debugging the request for section controllers
-        return ReelsSectionController()
-    }
-    
-    func emptyView(for listAdapter: ListAdapter) -> UIView? {
-        return nil
-    }
     
 }
 
