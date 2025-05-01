@@ -12,6 +12,7 @@ class PlayerView: UIView {
     private var isPreparing = false
     private var isCancelled = false
     private var alreadyPlayed = false
+    private static var playerTimeCache: [String: CMTime] = [:]
     var player: AVPlayer? {
         get {
             return playerLayer.player
@@ -124,11 +125,6 @@ class PlayerView: UIView {
             print("Already preparing... ")
             return
         }
-        if alreadyPlayed {
-
-                  player?.pause()
-            return
-              }
         
         print("prepare video start ")
         isCancelled = false
@@ -137,6 +133,9 @@ class PlayerView: UIView {
             switch result {
             case .success(let asset):
                 self?.setUpPlayerItem(with: asset)
+                if let time = PlayerView.playerTimeCache[url.absoluteString] {
+                               self?.player?.seek(to: time)
+                           }
                 print("prepared successfully")
                 
             case .failure(let error):
@@ -146,9 +145,12 @@ class PlayerView: UIView {
         }
         
     }
-    func cancelPreparation() {
+    func cancelPreparation(with url:URL?) {
         isCancelled = true
         isPreparing = false
+        if let url = url, let currentTime = player?.currentTime() {
+            PlayerView.playerTimeCache[url.absoluteString] = currentTime
+           }
         player?.pause()
         player = nil
         print("Cancelled preparation ")
