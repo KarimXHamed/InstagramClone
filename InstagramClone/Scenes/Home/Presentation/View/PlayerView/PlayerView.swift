@@ -71,23 +71,37 @@ class PlayerView: UIView {
         }
     }
     private func setUpPlayerItem(with asset: AVAsset) {
-        // Clean old player if exists
+        // Clean old player item if it exists
         if let oldPlayerItem = playerItem {
             oldPlayerItem.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status))
+            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: oldPlayerItem)
         }
+
         player?.pause()
         player = nil
         playerItem = nil
-        
-        // Now create the new player
+
+        // Create new AVPlayerItem
         let newItem = AVPlayerItem(asset: asset)
         playerItem = newItem
+
+        // Observe status change
         newItem.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.old, .new], context: &playerItemContext)
-        
+
+        // Observe end of playback to loop
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(playerDidFinishPlaying),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: newItem
+        )
+
+        // Set up player on main thread
         DispatchQueue.main.async { [weak self] in
             self?.player = AVPlayer(playerItem: newItem)
         }
     }
+
     
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -107,7 +121,19 @@ class PlayerView: UIView {
             case .readyToPlay:
                 print(".readyToPlay")
                 if !isCancelled {
-                    player?.play()
+                    if let currentItem = player?.currentItem,
+                       let urlAsset = currentItem.asset as? AVURLAsset {
+                        let key = urlAsset.url.absoluteString
+                        if let time = PlayerView.playerTimeCache[key] {
+                            player?.seek(to: time) { [weak self] _ in
+                                self?.player?.play()
+                            }
+                        } else {
+                            player?.play()
+                        }
+                    } else {
+                        player?.play()
+                    }
                     alreadyPlayed = true
                 }
             case .failed:
@@ -133,9 +159,6 @@ class PlayerView: UIView {
             switch result {
             case .success(let asset):
                 self?.setUpPlayerItem(with: asset)
-                if let time = PlayerView.playerTimeCache[url.absoluteString] {
-                               self?.player?.seek(to: time)
-                           }
                 print("prepared successfully")
                 
             case .failure(let error):
@@ -152,14 +175,26 @@ class PlayerView: UIView {
             PlayerView.playerTimeCache[url.absoluteString] = currentTime
            }
         player?.pause()
-        player = nil
+        //player = nil
         print("Cancelled preparation ")
     }
+    
     func resetPlayerView() {
-        player?.pause()
-        
-        player?.replaceCurrentItem(with: nil)
-        alreadyPlayed = false
+//        player?.pause()
+//        
+//        player?.replaceCurrentItem(with: nil)
+//        alreadyPlayed = false
+    }
+    
+    @objc private func playerDidFinishPlaying(notification: Notification) {
+        guard let currentItem = player?.currentItem, currentItem == notification.object as? AVPlayerItem else {
+            return
+        }
+
+        print("Video finished, replaying...")
+        player?.seek(to: .zero) { [weak self] _ in
+            self?.player?.play()
+        }
     }
     
     deinit {
