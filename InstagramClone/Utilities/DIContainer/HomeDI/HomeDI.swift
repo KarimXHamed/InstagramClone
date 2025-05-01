@@ -14,12 +14,11 @@ extension Container {
         let dataSourceHandler = ReelsDataSource(source: viewModel)
         
         viewModel.dataSourceInjection = { [weak viewController] in
-//            guard let viewController = viewController else { return }
-//            let adapter = viewController.listAdapter
-//            adapter?.collectionView = viewController.reelsCollectionView
-//            adapter?.dataSource = dataSourceHandler
-//            adapter?.delegate = dataSourceHandler
-//            print("Adapter and data source set")
+           let updater = ListAdapterUpdater()
+            viewController?.listAdapter = ListAdapter(updater: updater, viewController: viewController)
+            viewController?.listAdapter.collectionView = viewController?.reelsCollectionView
+            viewController?.listAdapter.dataSource = dataSourceHandler
+
         }
         return viewController
     }
