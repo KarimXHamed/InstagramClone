@@ -10,17 +10,14 @@ class ReelsSectionController : ListSectionController {
  private var model: ReelsCollectionViewCellModel?
  
     override func sizeForItem(at index: Int) -> CGSize {
-        print("start size for item")
 
         guard let collectionContext = collectionContext else {
-            print("failed size for item")
             return .zero
         }
 
         let width = collectionContext.containerSize.width
         let height = collectionContext.containerSize.height
 
-        print("Cell size for item at index \(index): width = \(width), height = \(height)")
         
         return CGSize(width: width, height: height)
     }
@@ -40,14 +37,12 @@ class ReelsSectionController : ListSectionController {
             fatalError("Could not dequeue ReelsCollectionViewCell")
         }
         
-        print("cellForItem at index \(index): \(model)")
-        cell.configure(model: model) 
+        cell.configure(model: model)
         return cell
     }
 
     override func didUpdate(to object: Any) {
         self.model = object as? ReelsCollectionViewCellModel
-        print("didUpdate model to: \(model?.url)")  // Debugging when the model is updated
 
     }
     
