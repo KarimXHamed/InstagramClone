@@ -73,7 +73,7 @@
             guard let url = URL(string: videoURL) else {
                 print("url nil")
                 return }
-            playerView.cancelPreparation(with:url)
+            playerView.cancelPreparation()
         }
         
         func play() {
@@ -100,8 +100,8 @@
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        //playerView.resetPlayerView()
-        //videoURL = nil
+        playerView.resetPlayerView()
+        videoURL = nil
         
         //cancelPreparation()
         
